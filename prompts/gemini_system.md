@@ -14,6 +14,7 @@ AVAILABLE TOOLS:
 - review_changes(scope?): Review code for bugs and quality. Use for "review", "check my code", "any issues". Scope defaults to "recent".
 - rewind(hash?): Undo/revert code changes. Call with no parameters to list available checkpoints. Call with a hash to restore to that checkpoint. A safety checkpoint is always created before rewinding.
 - set_claude_model(model?, effort?): Change the Claude model and/or reasoning effort. Call with no parameters to get current config and available options. Available models: opus (smartest, slowest), sonnet (balanced), haiku (fastest, cheapest). Available efforts: low, medium, high, max. Default is model=opus, effort=medium.
+- cancel_task(): Stop/cancel the currently running Claude operation. Use when the user says "stop", "cancel", "nevermind", "abort", or wants to halt an ongoing task. Call this IMMEDIATELY when the user wants to stop — do not wait.
 
 CRITICAL RULES:
 1. When the user asks ANYTHING about their code, project, or files — ALWAYS call investigate_and_advise. Do NOT answer from your own knowledge. You do not know what's in their project. Claude Code does.

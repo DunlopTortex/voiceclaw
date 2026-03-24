@@ -192,6 +192,11 @@ async function initVoiceUI(): Promise<void> {
                     .join("\n");
                   gemini!.sendFunctionResponse(id, name, `Available checkpoints (most recent first):\n${list}\n\nTo restore, call rewind with the hash of the checkpoint you want to go back to.`);
                 }
+                // Show checkpoints in timeline
+                if (data.checkpoints?.length > 0) {
+                  const display = data.checkpoints.map((c: any) => `${c.hash} — ${c.label} (${c.when})`).join("\n");
+                  ui.addStatus(`Checkpoints:\n${display}`);
+                }
                 ui.addGeminiToolResult(name, `Listed ${data.checkpoints?.length || 0} checkpoints`, false);
               })
               .catch((err) => {
@@ -260,6 +265,24 @@ async function initVoiceUI(): Promise<void> {
                 ui.addGeminiToolResult(name, `Failed: ${err}`, true);
               });
           }
+          return;
+        }
+
+        if (name === "cancel_task") {
+          fetch("/api/cancel", { method: "POST" })
+            .then((r) => r.json())
+            .then((data) => {
+              const msg = data.message || "Operation cancelled";
+              gemini!.sendFunctionResponse(id, name, msg);
+              ui.addGeminiToolResult(name, msg, false);
+              ui.setClaudeWorking(false);
+              narration?.silence();
+              ui.addStatus("Claude operation cancelled");
+            })
+            .catch((err) => {
+              gemini!.sendFunctionResponse(id, name, `Cancel failed: ${err}`);
+              ui.addGeminiToolResult(name, `Failed: ${err}`, true);
+            });
           return;
         }
 

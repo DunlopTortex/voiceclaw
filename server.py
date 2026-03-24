@@ -232,6 +232,19 @@ async def get_context():
 # ── WebSocket ─────────────────────────────────────────────────
 
 
+@app.post("/api/cancel")
+async def cancel_claude():
+    """Kill any running Claude subprocess."""
+    if claude_runner and claude_runner.process:
+        try:
+            claude_runner.process.kill()
+            claude_runner.process = None
+            return {"ok": True, "message": "Claude operation cancelled"}
+        except Exception as e:
+            return JSONResponse({"error": str(e)}, status_code=500)
+    return {"ok": True, "message": "No operation running"}
+
+
 async def handle_function_call(websocket: WebSocket, msg: dict):
     """Process a function call from Gemini via the browser relay."""
     if not function_router:

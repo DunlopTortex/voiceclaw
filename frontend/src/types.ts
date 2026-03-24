@@ -167,6 +167,15 @@ export const functionDeclarations: FunctionDeclaration[] = [
       },
     },
   },
+  {
+    name: "cancel_task",
+    description:
+      "Cancel/stop the currently running Claude operation. Use when the user says 'stop', 'cancel', 'nevermind', 'abort', or wants to halt an ongoing code task.",
+    parametersJsonSchema: {
+      type: "object",
+      properties: {},
+    },
+  },
 ];
 
 // ── WebSocket Messages (Browser ↔ Backend) ───────────────────
