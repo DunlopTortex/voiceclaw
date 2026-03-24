@@ -39,11 +39,12 @@
       <div id="voice-screen" class="screen" style="display: none">
         <header id="header">
           <div id="header-left">
-            <h1>VoiceCode</h1>
+            <h1>VoiceCodePlus</h1>
             <span id="project-name" class="project-name"></span>
+            <button id="change-project-btn" title="Change project">Change</button>
           </div>
           <div id="controls">
-            <button id="change-project-btn" title="Change project">Change</button>
+            <button id="new-chat-btn" title="Clear Gemini context and start fresh">New Chat</button>
             <select id="language-select" title="Speech language">
               <option value="en-US">English</option>
               <option value="hi-IN">Hindi</option>
@@ -102,7 +103,7 @@
           <!-- Right panel: Unified timeline -->
           <section id="activity-panel">
             <div id="filter-bar">
-              <label class="filter-chip" data-filter="gemini-thinking"><input type="checkbox" checked /><span class="chip-dot" style="background:#58a6ff"></span>Jarvis Thinking</label>
+              <label class="filter-chip" data-filter="gemini-thinking"><input type="checkbox" checked /><span class="chip-dot" style="background:#58a6ff"></span>Gemini Thinking</label>
               <label class="filter-chip" data-filter="gemini-tool-call"><input type="checkbox" checked /><span class="chip-dot" style="background:#d29922"></span>Tool Call</label>
               <label class="filter-chip" data-filter="gemini-tool-result"><input type="checkbox" checked /><span class="chip-dot" style="background:#3fb950"></span>Tool Result</label>
               <label class="filter-chip" data-filter="claude-tool"><input type="checkbox" checked /><span class="chip-dot" style="background:#79c0ff"></span>Agent Activity</label>

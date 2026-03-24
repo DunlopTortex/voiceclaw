@@ -15,6 +15,7 @@ export class NarrationConnection {
   private session: any = null;
   private audioManager: AudioManager;
   private onTranscript: (text: string) => void;
+  private onTurnDone: () => void;
   private muted = false;
   private connected = false;
   private languageCode: string;
@@ -24,9 +25,10 @@ export class NarrationConnection {
   private flushTimer: ReturnType<typeof setTimeout> | null = null;
   private readonly FLUSH_DELAY_MS = 1500;
 
-  constructor(audioManager: AudioManager, onTranscript: (text: string) => void, languageCode: string = "en-US") {
+  constructor(audioManager: AudioManager, onTranscript: (text: string) => void, languageCode: string = "en-US", onTurnDone?: () => void) {
     this.audioManager = audioManager;
     this.onTranscript = onTranscript;
+    this.onTurnDone = onTurnDone || (() => {});
     this.languageCode = languageCode;
   }
 
@@ -104,6 +106,11 @@ export class NarrationConnection {
       const text = message.serverContent.outputTranscription.text;
       log("NARRATION", `Said: ${text}`);
       this.onTranscript(text);
+    }
+
+    // Turn complete — start a new transcript line for next thought
+    if (message.serverContent?.turnComplete) {
+      this.onTurnDone();
     }
   }
 

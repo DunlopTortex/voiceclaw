@@ -309,6 +309,10 @@ export class GeminiConnection {
     }, 3000);
   }
 
+  clearSessionHandle(): void {
+    this.sessionHandle = null;
+  }
+
   async disconnect(): Promise<void> {
     this.reconnecting = true; // Prevent auto-reconnect
     if (this.session) {

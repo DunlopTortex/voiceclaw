@@ -143,7 +143,7 @@ async function initVoiceUI(): Promise<void> {
       },
       onInterrupted: () => {
         ui.endTranscript();
-        ui.addStatus("User interrupted Jarvis");
+        ui.addStatus("User interrupted Gemini");
       },
       onThinking: (text) => {
         ui.addGeminiThinking(text);
@@ -265,12 +265,12 @@ async function initVoiceUI(): Promise<void> {
       onConnected: () => {
         ui.setConnected(true);
         isConnected = true;
-        ui.addStatus("Jarvis connected");
+        ui.addStatus("Gemini connected");
       },
       onDisconnected: () => {
         ui.setConnected(false);
         isConnected = false;
-        ui.addStatus("Jarvis disconnected");
+        ui.addStatus("Gemini disconnected");
       },
       onStateChange: (state) => {
         ui.setGeminiState(state);
@@ -281,8 +281,10 @@ async function initVoiceUI(): Promise<void> {
 
     // Start narration Gemini (separate session for live commentary)
     narration = new NarrationConnection(audioManager!, (text) => {
-      ui.addTranscript("gemini", text);
-    }, langSelect.value);
+      ui.addTranscript("narrator", text);
+    }, langSelect.value, () => {
+      ui.endTranscript();
+    });
     narration.silence(); // Start muted — unmute when Claude is working
     await narration.connect();
   }
@@ -301,6 +303,29 @@ async function initVoiceUI(): Promise<void> {
       isConnected = false;
       return;
     }
+    await connectGemini();
+  });
+
+  // New Chat button — clear Gemini context and reconnect fresh
+  document.getElementById("new-chat-btn")!.addEventListener("click", async () => {
+    if (gemini) {
+      gemini.clearSessionHandle();
+      await gemini.disconnect();
+    }
+    if (narration) {
+      await narration.disconnect();
+    }
+    audioManager?.stopCapture();
+    ui.setConnected(false);
+    isConnected = false;
+    // Clear stored session handle on backend
+    fetch("/api/session", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ gemini_handle: null }),
+    }).catch(() => {});
+    ui.clearAll();
+    ui.addStatus("Context cleared — starting new session");
     await connectGemini();
   });
 

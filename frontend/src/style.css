@@ -250,6 +250,7 @@ html, body {
   white-space: nowrap;
 }
 
+#new-chat-btn,
 #change-project-btn {
   background: transparent;
   color: var(--text-secondary);
@@ -261,6 +262,7 @@ html, body {
   cursor: pointer;
 }
 
+#new-chat-btn:hover,
 #change-project-btn:hover {
   color: var(--text-primary);
   border-color: var(--text-secondary);
@@ -483,7 +485,7 @@ html, body {
 
 .transcript-user .role { color: var(--accent); }
 .transcript-gemini .role { color: var(--success); }
-.transcript-narrator .role { color: var(--success); }
+.transcript-narrator .role { color: #d29922; }
 .transcript-draft .transcript-text { opacity: 0.5; font-style: italic; }
 
 /* Activity panel */
