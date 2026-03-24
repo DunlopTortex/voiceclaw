@@ -1,4 +1,4 @@
-"""VoiceCode backend — FastAPI server with WebSocket for Claude events."""
+"""VoiceClaw backend — FastAPI server with WebSocket for Claude events."""
 
 import argparse
 import asyncio
@@ -20,7 +20,7 @@ from stt_service import transcribe_audio
 
 load_dotenv()
 
-app = FastAPI(title="VoiceCode")
+app = FastAPI(title="VoiceClaw")
 
 # Global state
 project_dir: str | None = None
@@ -303,7 +303,7 @@ if static_dir.exists():
 def main():
     import uvicorn
 
-    parser = argparse.ArgumentParser(description="VoiceCode server")
+    parser = argparse.ArgumentParser(description="VoiceClaw server")
     parser.add_argument(
         "--project",
         default=None,
@@ -315,7 +315,7 @@ def main():
     if args.project:
         set_project(os.path.abspath(args.project))
 
-    print(f"VoiceCode starting on http://localhost:{args.port}")
+    print(f"VoiceClaw starting on http://localhost:{args.port}")
     if project_dir:
         print(f"Project directory: {project_dir}")
     else:

@@ -1,5 +1,5 @@
 /**
- * VoiceCode — Entry point. Glues together all modules.
+ * VoiceClaw — Entry point. Glues together all modules.
  *
  * Flow:
  *   1. Check if project is selected (GET /api/project)
@@ -483,7 +483,7 @@ async function init() {
     browseDir("~");
   }
 
-  console.log("VoiceCode initialized");
+  console.log("VoiceClaw initialized");
 }
 
 init().catch(console.error);

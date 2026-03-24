@@ -63,7 +63,7 @@ class GitCheckpoint:
                     "git",
                     "commit",
                     "-m",
-                    f"[VoiceCode checkpoint] {label}",
+                    f"[VoiceClaw checkpoint] {label}",
                     "--allow-empty",
                 ],
                 cwd=self.project_dir,
@@ -75,14 +75,14 @@ class GitCheckpoint:
             return False
 
     def list_checkpoints(self, limit: int = 20) -> list[dict]:
-        """List recent VoiceCode checkpoints."""
+        """List recent VoiceClaw checkpoints."""
         try:
             result = subprocess.run(
                 [
                     "git", "log", "--oneline", "--all",
                     f"--max-count={limit}",
                     "--fixed-strings",
-                    "--grep=[VoiceCode checkpoint]",
+                    "--grep=[VoiceClaw checkpoint]",
                     "--format=%h|%s|%cr",
                 ],
                 cwd=self.project_dir,
@@ -95,7 +95,7 @@ class GitCheckpoint:
                     continue
                 parts = line.split("|", 2)
                 if len(parts) == 3:
-                    label = parts[1].replace("[VoiceCode checkpoint] ", "")
+                    label = parts[1].replace("[VoiceClaw checkpoint] ", "")
                     checkpoints.append({
                         "hash": parts[0],
                         "label": label,
@@ -107,7 +107,7 @@ class GitCheckpoint:
 
     def restore(self, commit_hash: str) -> dict:
         """Restore code to a specific checkpoint. Returns status."""
-        # Verify it's a valid VoiceCode checkpoint
+        # Verify it's a valid VoiceClaw checkpoint
         try:
             result = subprocess.run(
                 ["git", "log", "-1", "--format=%s", commit_hash],
@@ -115,8 +115,8 @@ class GitCheckpoint:
                 capture_output=True,
                 text=True,
             )
-            if "[VoiceCode checkpoint]" not in result.stdout:
-                return {"ok": False, "error": "Not a VoiceCode checkpoint"}
+            if "[VoiceClaw checkpoint]" not in result.stdout:
+                return {"ok": False, "error": "Not a VoiceClaw checkpoint"}
         except (subprocess.CalledProcessError, FileNotFoundError):
             return {"ok": False, "error": "Invalid commit hash"}
 
