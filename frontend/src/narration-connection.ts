@@ -63,6 +63,9 @@ export class NarrationConnection {
           realtimeInputConfig: {
             automaticActivityDetection: { disabled: true },
           },
+          thinkingConfig: {
+            thinkingLevel: "high",
+          },
           contextWindowCompression: {
             triggerTokens: 104857,
             slidingWindow: { targetTokens: 52428 },

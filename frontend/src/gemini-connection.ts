@@ -88,6 +88,10 @@ export class GeminiConnection {
           realtimeInputConfig: {
             automaticActivityDetection: { disabled: true },
           },
+          thinkingConfig: {
+            thinkingLevel: "high",
+            includeThoughts: true,
+          },
           contextWindowCompression: {
             triggerTokens: 104857,
             slidingWindow: {
