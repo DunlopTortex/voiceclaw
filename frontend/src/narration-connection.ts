@@ -155,10 +155,7 @@ export class NarrationConnection {
     this.eventBuffer = [];
 
     try {
-      this.session.sendClientContent({
-        turns: message,
-        turnComplete: true,
-      });
+      this.session.sendRealtimeInput({ text: message });
       log("NARRATION", `Sent update: ${message.slice(0, 120)}`);
     } catch (err) {
       log("NARRATION", `Error sending: ${err}`);
@@ -183,10 +180,7 @@ export class NarrationConnection {
     }
 
     try {
-      this.session.sendClientContent({
-        turns: text,
-        turnComplete: true,
-      });
+      this.session.sendRealtimeInput({ text });
       log("NARRATION", `Sent immediate: ${text.slice(0, 120)}`);
     } catch (err) {
       log("NARRATION", `Error sending: ${err}`);

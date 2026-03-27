@@ -251,10 +251,16 @@ export class GeminiConnection {
         parts.push({ text });
       }
 
-      this.session.sendClientContent({
-        turns: [{ role: "user", parts }],
-        turnComplete: true,
-      });
+      // 3.1 Flash Live doesn't support sendClientContent mid-conversation
+      if (text && !images?.length) {
+        this.session.sendRealtimeInput({ text });
+      } else {
+        // For images, sendClientContent is the only option
+        this.session.sendClientContent({
+          turns: [{ role: "user", parts }],
+          turnComplete: true,
+        });
+      }
       log("GEMINI", `Sent message: "${text}" + ${images?.length || 0} images`);
     } catch (err) {
       log("GEMINI", `ERROR sending message: ${err}`);
