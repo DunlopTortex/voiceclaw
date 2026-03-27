@@ -1,6 +1,10 @@
-# 🐫 VoiceClaw
+<p align="center">
+  <img src="https://emojitool.com/img/joypixels/9.0/9.0-3207.png" alt="VoiceClaw" width="120">
+</p>
 
-> **The world's first Voice Coding Agent, powered by Claude Code.**
+<h1 align="center">VoiceClaw</h1>
+
+<p align="center"><strong>The world's first Voice Coding Agent, powered by Claude Code.</strong></p>
 
 <p align="center">
   <a href="https://github.com/yogen-ghodke-113/VoiceClaw/blob/master/LICENSE"><img src="https://img.shields.io/github/license/yogen-ghodke-113/VoiceClaw" alt="License"></a>
