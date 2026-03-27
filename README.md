@@ -2,7 +2,7 @@
   <img src="assets/logo.png" alt="VoiceClaw" width="120">
 </p>
 
-<h1 align="center">🐫 VoiceClaw</h1>
+<h1 align="center">VoiceClaw</h1>
 
 <p align="center"><strong>The world's first Voice Coding Agent, powered by <a href="https://ai.google.dev/gemini-api/docs/models#gemini-3.1-flash-live">Gemini 3.1 Flash Live</a> and <a href="https://docs.anthropic.com/en/docs/claude-code">Claude Code</a>.</strong></p>
 
