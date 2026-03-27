@@ -288,7 +288,7 @@ export class UI {
     } else {
       const entry = document.createElement("div");
       entry.className = `transcript-entry transcript-${role}`;
-      const roleLabels: Record<string, string> = { user: "You", gemini: "Gemini", narrator: "Gemini (Thinking)" };
+      const roleLabels: Record<string, string> = { user: "You", gemini: "Jarvis", narrator: "Jarvis (Thinking)" };
       const roleLabel = roleLabels[role] || role;
       entry.innerHTML = `<span class="role">${roleLabel}:</span> <span class="transcript-text">${escapeHtml(text)}</span>`;
 
