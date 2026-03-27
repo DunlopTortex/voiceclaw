@@ -2,6 +2,13 @@
 
 > **The world's first Voice Coding Agent, powered by Claude Code.**
 
+<p align="center">
+  <a href="https://github.com/yogen-ghodke-113/VoiceClaw/blob/master/LICENSE"><img src="https://img.shields.io/github/license/yogen-ghodke-113/VoiceClaw" alt="License"></a>
+  <a href="https://github.com/yogen-ghodke-113/VoiceClaw/stargazers"><img src="https://img.shields.io/github/stars/yogen-ghodke-113/VoiceClaw" alt="GitHub Stars"></a>
+  <a href="https://discord.gg/eqjtNPS2"><img src="https://img.shields.io/badge/Join%20Discord-5865F2?style=flat&logo=discord&logoColor=white" alt="Discord"></a>
+  <a href="https://www.linkedin.com/in/yogenghodke/"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=flat&logo=linkedin&logoColor=white" alt="LinkedIn"></a>
+</p>
+
 Voice-first AI pair programmer. Talk to your codebase through Gemini Live, with Claude Code doing the heavy lifting.
 
 You speak naturally, Gemini understands your intent and orchestrates the right tools, Claude reads and writes your code, and a second Gemini narrates what's happening in real time so you're never left in silence.
@@ -166,6 +173,11 @@ Press **Ctrl+Shift+D** in the browser to download a detailed event log. Logs inc
 | Variable | Required | Description |
 |----------|----------|-------------|
 | `GEMINI_API_KEY` | Yes | API key from [Google AI Studio](https://aistudio.google.com/app/apikey) |
+
+## Community
+
+- [Discord](https://discord.gg/eqjtNPS2) — join for help, feature discussions, and demos
+- [LinkedIn](https://www.linkedin.com/in/yogenghodke/) — follow for updates
 
 ## License
 
