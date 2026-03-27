@@ -74,9 +74,13 @@ export class NarrationConnection {
         callbacks: {
           onopen: () => {
             log("NARRATION", "Connected");
-            this.connected = true;
           },
           onmessage: (message: any) => {
+            // Wait for setup_complete before marking as ready to send
+            if (message.setupComplete != null && !this.connected) {
+              this.connected = true;
+              log("NARRATION", "Setup complete — ready to send");
+            }
             this.handleMessage(message);
           },
           onerror: (error: any) => {
