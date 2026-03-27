@@ -55,6 +55,9 @@ export class NarrationConnection {
           systemInstruction: configRes.system_prompt,
           speechConfig: {
             languageCode: this.languageCode,
+            voiceConfig: {
+              prebuiltVoiceConfig: { voiceName: "Algenib" },
+            },
           },
           outputAudioTranscription: {},
           realtimeInputConfig: {
