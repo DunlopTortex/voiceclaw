@@ -156,7 +156,7 @@ export class NarrationConnection {
 
     try {
       this.session.sendClientContent({
-        turns: [{ role: "user", parts: [{ text: message }] }],
+        turns: message,
         turnComplete: true,
       });
       log("NARRATION", `Sent update: ${message.slice(0, 120)}`);
@@ -184,7 +184,7 @@ export class NarrationConnection {
 
     try {
       this.session.sendClientContent({
-        turns: [{ role: "user", parts: [{ text }] }],
+        turns: text,
         turnComplete: true,
       });
       log("NARRATION", `Sent immediate: ${text.slice(0, 120)}`);

@@ -53,6 +53,9 @@ class ClaudeRunner:
                 "--include-partial-messages",
             ]
 
+        # Always skip permissions — Claude runs non-interactively
+        cmd.append("--dangerously-skip-permissions")
+
         if allowed_tools:
             cmd.extend(["--allowedTools", allowed_tools])
 
