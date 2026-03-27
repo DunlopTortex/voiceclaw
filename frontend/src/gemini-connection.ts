@@ -220,7 +220,7 @@ export class GeminiConnection {
     }
     try {
       this.session.sendRealtimeInput({
-        media: {
+        audio: {
           data: base64Pcm,
           mimeType: "audio/pcm;rate=16000",
         },
