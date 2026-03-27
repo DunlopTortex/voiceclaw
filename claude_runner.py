@@ -62,8 +62,8 @@ class ClaudeRunner:
         if permission_mode:
             cmd.extend(["--permission-mode", permission_mode])
 
-        if self.session_id:
-            cmd.extend(["--resume", self.session_id])
+        # Don't resume sessions — each function call is independent
+        # Resuming stale sessions causes "No conversation found" errors
 
         loop = asyncio.get_event_loop()
         self.process = await loop.run_in_executor(
@@ -229,9 +229,13 @@ class ClaudeRunner:
             if event_type == "result":
                 self.session_id = event.get("session_id", self.session_id)
                 result_emitted = True
+                result_text = event.get("result", "")
+                # Include errors array if result is empty
+                if not result_text and event.get("errors"):
+                    result_text = "; ".join(event["errors"])
                 yield {
                     "type": "function_result",
-                    "result": event.get("result", ""),
+                    "result": result_text,
                     "is_error": event.get("is_error", False),
                     "session_id": self.session_id,
                 }
