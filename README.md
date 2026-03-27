@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://em-content.zobj.net/source/joypixels/340/two-hump-camel_1f42b.png" alt="VoiceClaw" width="120">
+  <img src="assets/logo.png" alt="VoiceClaw" width="120">
 </p>
 
 <h1 align="center">VoiceClaw</h1>
