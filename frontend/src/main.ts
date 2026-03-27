@@ -151,7 +151,7 @@ async function initVoiceUI(): Promise<void> {
       },
       onInterrupted: () => {
         ui.endTranscript();
-        ui.addStatus("User interrupted Jarvis");
+        ui.addStatus("User interrupted Gemini");
       },
       onThinking: (text) => {
         ui.addGeminiThinking(text);
@@ -301,7 +301,7 @@ async function initVoiceUI(): Promise<void> {
       onDisconnected: () => {
         ui.setConnected(false);
         isConnected = false;
-        ui.addStatus("Jarvis disconnected");
+        ui.addStatus("Gemini disconnected");
       },
       onStateChange: (state) => {
         ui.setGeminiState(state);
@@ -337,7 +337,7 @@ async function initVoiceUI(): Promise<void> {
     await connectGemini();
   });
 
-  // New Chat button — clear context and reconnect fresh
+  // New Chat button — clear Gemini context and reconnect fresh
   document.getElementById("new-chat-btn")!.addEventListener("click", async () => {
     if (gemini) {
       gemini.clearSessionHandle();
