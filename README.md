@@ -4,7 +4,7 @@
 
 <h1 align="center">VoiceClaw</h1>
 
-<p align="center"><strong>The world's first Voice Coding Agent, powered by Claude Code.</strong></p>
+<p align="center"><strong>The world's first Voice Coding Agent, powered by <a href="https://ai.google.dev/gemini-api/docs/models#gemini-3.1-flash-live">Gemini 3.1 Flash Live</a> and <a href="https://docs.anthropic.com/en/docs/claude-code">Claude Code</a>.</strong></p>
 
 <p align="center">
   <a href="https://github.com/yogen-ghodke-113/VoiceClaw/blob/master/LICENSE"><img src="https://img.shields.io/github/license/yogen-ghodke-113/VoiceClaw" alt="License"></a>
@@ -182,6 +182,10 @@ Press **Ctrl+Shift+D** in the browser to download a detailed event log. Logs inc
 
 - [Discord](https://discord.gg/eqjtNPS2) — join for help, feature discussions, and demos
 - [LinkedIn](https://www.linkedin.com/in/yogenghodke/) — follow for updates
+
+## Disclaimer
+
+> **VoiceClaw is an open-source project hosted exclusively on this GitHub repository. We do NOT own, operate, or are affiliated with any website using the "VoiceClaw" name, including but not limited to voiceclaw.io or any similar domains. The only official source for VoiceClaw is this repository: [github.com/yogen-ghodke-113/VoiceClaw](https://github.com/yogen-ghodke-113/VoiceClaw). Exercise caution with any other source claiming to be VoiceClaw.**
 
 ## License
 
