@@ -63,6 +63,7 @@ export class NarrationConnection {
           maxOutputTokens: 8192,
           thinkingConfig: {
             thinkingBudget: 8192,
+            thinkingLevel: "high",
           },
           contextWindowCompression: {
             triggerTokens: "100000",

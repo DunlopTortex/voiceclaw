@@ -126,7 +126,7 @@ async def get_config():
         system_prompt = prompt_path.read_text(encoding="utf-8")
     return {
         "system_prompt": system_prompt,
-        "model": "gemini-2.5-flash-native-audio-preview-12-2025",
+        "model": "gemini-3.1-flash-live-preview",
     }
 
 
@@ -138,7 +138,7 @@ async def get_narration_config():
         system_prompt = prompt_path.read_text(encoding="utf-8")
     return {
         "system_prompt": system_prompt,
-        "model": "gemini-2.5-flash-native-audio-preview-12-2025",
+        "model": "gemini-3.1-flash-live-preview",
     }
 
 
