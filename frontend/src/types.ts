@@ -148,20 +148,34 @@ export const functionDeclarations: FunctionDeclaration[] = [
     },
   },
   {
-    name: "set_claude_model",
+    name: "set_coding_provider",
     description:
-      "Change the Claude AI model and/or reasoning effort used for code tasks. Call this when the user asks to switch models, use a different model, change reasoning effort, or wants faster/smarter responses. If the user asks what models or efforts are available, call this with no parameters to get the current config and available options.",
+      "Switch the coding AI provider. Use when the user says 'use ollama', 'switch to local', 'use zed', 'use claude', 'use z.ai', 'go private', 'go local', or asks about available providers. Providers: 'claude' (Claude CLI, full tool access), 'ollama' (local LLM, private), 'zed' (Z.ai). Call with no parameters to list current provider and available options.",
+    parametersJsonSchema: {
+      type: "object",
+      properties: {
+        provider: {
+          type: "string",
+          description: "The coding provider to use: 'claude' (Claude CLI), 'ollama' (local LLM via Ollama), or 'zed' (Z.ai)",
+          enum: ["claude", "ollama", "zed"],
+        },
+      },
+    },
+  },
+  {
+    name: "set_model_config",
+    description:
+      "Change the model and/or settings for the current coding provider. For Claude: model (opus/sonnet/haiku) and effort (low/medium/high/max). For Ollama: model name (e.g. llama3.1, codellama, deepseek-coder). For Z.ai: model name. Call with no parameters to get current config.",
     parametersJsonSchema: {
       type: "object",
       properties: {
         model: {
           type: "string",
-          description: "The model to use: 'opus' (smartest, slowest), 'sonnet' (balanced), or 'haiku' (fastest, cheapest)",
-          enum: ["opus", "sonnet", "haiku"],
+          description: "The model to use (provider-specific). Claude: opus/sonnet/haiku. Ollama: any installed model name. Zed: model name.",
         },
         effort: {
           type: "string",
-          description: "Reasoning effort level: 'low', 'medium', 'high', or 'max'",
+          description: "Reasoning effort level (Claude only): 'low', 'medium', 'high', or 'max'",
           enum: ["low", "medium", "high", "max"],
         },
       },

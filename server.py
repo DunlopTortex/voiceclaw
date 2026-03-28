@@ -13,10 +13,13 @@ from fastapi.staticfiles import StaticFiles
 
 from checkpoint import GitCheckpoint, SessionManager
 from claude_runner import ClaudeRunner
+from coding_provider import CodingProvider
 from context_bridge import ContextBridge
 from function_router import FunctionRouter
 from gemini_session import create_ephemeral_token
+from ollama_provider import OllamaProvider
 from stt_service import transcribe_audio
+from zed_provider import ZedProvider
 
 load_dotenv()
 
@@ -24,28 +27,39 @@ app = FastAPI(title="VoiceClaw")
 
 # Global state
 project_dir: str | None = None
-claude_runner: ClaudeRunner | None = None
+coding_provider: CodingProvider | None = None
 function_router: FunctionRouter | None = None
 context_bridge = ContextBridge()
 session_manager: SessionManager | None = None
 git_checkpoint: GitCheckpoint | None = None
+current_coding_provider_name: str = os.getenv("CODING_PROVIDER", "claude")
+
+
+def create_coding_provider(provider_name: str, proj_dir: str) -> CodingProvider:
+    """Factory: create a coding provider by name."""
+    if provider_name == "ollama":
+        return OllamaProvider(proj_dir)
+    elif provider_name == "zed":
+        return ZedProvider(proj_dir)
+    else:
+        return ClaudeRunner(proj_dir)
 
 
 def set_project(path: str):
     """Initialize all components for a project directory."""
-    global project_dir, claude_runner, function_router, session_manager, git_checkpoint
+    global project_dir, coding_provider, function_router, session_manager, git_checkpoint
 
     project_dir = path
     session_manager = SessionManager(project_dir)
-    claude_runner = ClaudeRunner(project_dir)
-    function_router = FunctionRouter(claude_runner)
+    coding_provider = create_coding_provider(current_coding_provider_name, project_dir)
+    function_router = FunctionRouter(coding_provider)
     git_checkpoint = GitCheckpoint(project_dir)
 
-    # Restore Claude session ID if available
-    if session_manager.claude_session_id:
-        claude_runner.session_id = session_manager.claude_session_id
+    # Restore Claude session ID if available (only relevant for Claude provider)
+    if session_manager.claude_session_id and isinstance(coding_provider, ClaudeRunner):
+        coding_provider.session_id = session_manager.claude_session_id
 
-    print(f"Project set: {project_dir}")
+    print(f"Project set: {project_dir} (coding provider: {current_coding_provider_name})")
 
 
 # ── REST Endpoints ────────────────────────────────────────────
@@ -178,29 +192,82 @@ async def transcribe(request: Request):
 
 @app.post("/api/claude-config")
 async def set_claude_config(request: Request):
-    if not claude_runner:
+    if not coding_provider:
         return JSONResponse({"error": "No project selected"}, status_code=400)
 
     data = await request.json()
-    model = data.get("model", "").strip()
-    effort = data.get("effort", "").strip()
-
-    valid_models = {"opus", "sonnet", "haiku"}
-    valid_efforts = {"low", "medium", "high", "max"}
-
-    if model and model in valid_models:
-        claude_runner.model = model
-    if effort and effort in valid_efforts:
-        claude_runner.effort = effort
-
-    return {"model": claude_runner.model, "effort": claude_runner.effort}
+    config = coding_provider.set_config(**data)
+    return config
 
 
 @app.get("/api/claude-config")
 async def get_claude_config():
-    if not claude_runner:
-        return {"model": "opus", "effort": "medium"}
-    return {"model": claude_runner.model, "effort": claude_runner.effort}
+    if not coding_provider:
+        return {"provider": "claude", "model": "opus", "effort": "high"}
+    return coding_provider.get_config()
+
+
+@app.get("/api/coding-provider")
+async def get_coding_provider():
+    """Get current coding provider and available providers."""
+    return {
+        "current": current_coding_provider_name,
+        "config": coding_provider.get_config() if coding_provider else {},
+        "available": [
+            {
+                "name": "claude",
+                "label": "Claude CLI",
+                "description": "Anthropic Claude Code CLI — full tool access (Read, Write, Bash, etc.)",
+            },
+            {
+                "name": "ollama",
+                "label": "Ollama (Local)",
+                "description": "Local LLM via Ollama — private, no data leaves your machine",
+            },
+            {
+                "name": "zed",
+                "label": "Z.ai (Zed)",
+                "description": "Zed's AI assistant — fast coding with Z.ai API or Zed CLI",
+            },
+        ],
+    }
+
+
+@app.post("/api/coding-provider")
+async def set_coding_provider(request: Request):
+    """Switch the active coding provider."""
+    global coding_provider, function_router, current_coding_provider_name
+
+    if not project_dir:
+        return JSONResponse({"error": "No project selected"}, status_code=400)
+
+    data = await request.json()
+    provider_name = data.get("provider", "").strip()
+
+    valid_providers = {"claude", "ollama", "zed"}
+    if provider_name not in valid_providers:
+        return JSONResponse(
+            {"error": f"Unknown provider: {provider_name}. Valid: {', '.join(valid_providers)}"},
+            status_code=400,
+        )
+
+    # Cancel any running operation
+    if coding_provider:
+        await coding_provider.cancel()
+
+    current_coding_provider_name = provider_name
+    coding_provider = create_coding_provider(provider_name, project_dir)
+    function_router = FunctionRouter(coding_provider)
+
+    # Restore Claude session ID if switching back to Claude
+    if isinstance(coding_provider, ClaudeRunner) and session_manager and session_manager.claude_session_id:
+        coding_provider.session_id = session_manager.claude_session_id
+
+    print(f"Coding provider switched to: {provider_name}")
+    return {
+        "provider": provider_name,
+        "config": coding_provider.get_config(),
+    }
 
 
 @app.get("/api/checkpoints")
@@ -233,13 +300,12 @@ async def get_context():
 
 
 @app.post("/api/cancel")
-async def cancel_claude():
-    """Kill any running Claude subprocess."""
-    if claude_runner and claude_runner.process:
+async def cancel_task():
+    """Kill any running coding operation."""
+    if coding_provider:
         try:
-            claude_runner.process.kill()
-            claude_runner.process = None
-            return {"ok": True, "message": "Claude operation cancelled"}
+            await coding_provider.cancel()
+            return {"ok": True, "message": f"{current_coding_provider_name} operation cancelled"}
         except Exception as e:
             return JSONResponse({"error": str(e)}, status_code=500)
     return {"ok": True, "message": "No operation running"}
@@ -274,8 +340,8 @@ async def handle_function_call(websocket: WebSocket, msg: dict):
             # Store in context bridge
             context_bridge.store(name, args, event.get("result", ""))
 
-            # Update session ID
-            if session_manager and event.get("session_id"):
+            # Update session ID (only for Claude provider)
+            if session_manager and event.get("session_id") and isinstance(coding_provider, ClaudeRunner):
                 session_manager.claude_session_id = event["session_id"]
 
         try:
