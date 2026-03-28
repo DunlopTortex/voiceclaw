@@ -7,10 +7,12 @@ import threading
 from queue import Queue, Empty
 from typing import AsyncGenerator
 
+from coding_provider import CodingProvider
 
-class ClaudeRunner:
+
+class ClaudeRunner(CodingProvider):
     def __init__(self, project_dir: str):
-        self.project_dir = project_dir
+        super().__init__(project_dir)
         self.session_id: str | None = None
         self.process: subprocess.Popen | None = None
         self.model: str = "opus"
@@ -259,3 +261,28 @@ class ClaudeRunner:
                 self.process.wait(timeout=5)
             except subprocess.TimeoutExpired:
                 self.process.kill()
+
+    def get_config(self) -> dict:
+        return {
+            "provider": "claude",
+            "model": self.model,
+            "effort": self.effort,
+        }
+
+    def set_config(self, **kwargs) -> dict:
+        valid_models = {"opus", "sonnet", "haiku"}
+        valid_efforts = {"low", "medium", "high", "max"}
+
+        model = kwargs.get("model", "")
+        effort = kwargs.get("effort", "")
+
+        if model and model in valid_models:
+            self.model = model
+        if effort and effort in valid_efforts:
+            self.effort = effort
+
+        return self.get_config()
+
+    @staticmethod
+    def provider_name() -> str:
+        return "claude"

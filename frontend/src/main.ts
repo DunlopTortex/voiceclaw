@@ -230,16 +230,71 @@ async function initVoiceUI(): Promise<void> {
           return;
         }
 
-        if (name === "set_claude_model") {
+        if (name === "set_coding_provider") {
+          const provider = (args.provider as string) || "";
+
+          if (!provider) {
+            // No params — return current provider and available options
+            fetch("/api/coding-provider")
+              .then((r) => r.json())
+              .then((data) => {
+                const available = data.available
+                  .map((p: any) => `• ${p.name} (${p.label}): ${p.description}`)
+                  .join("\n");
+                const configStr = Object.entries(data.config || {})
+                  .map(([k, v]) => `${k}=${v}`)
+                  .join(", ");
+                const msg = `Current provider: ${data.current} (${configStr}).\n\nAvailable providers:\n${available}`;
+                gemini!.sendFunctionResponse(id, name, msg);
+                ui.addGeminiToolResult(name, msg, false);
+              })
+              .catch((err) => {
+                gemini!.sendFunctionResponse(id, name, `Failed to get provider info: ${err}`);
+                ui.addGeminiToolResult(name, `Failed: ${err}`, true);
+              });
+          } else {
+            log("CONFIG", `Switching coding provider to: ${provider}`);
+            fetch("/api/coding-provider", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ provider }),
+            })
+              .then((r) => r.json())
+              .then((data) => {
+                if (data.error) {
+                  gemini!.sendFunctionResponse(id, name, `Error: ${data.error}`);
+                  ui.addGeminiToolResult(name, `Error: ${data.error}`, true);
+                } else {
+                  const configStr = Object.entries(data.config || {})
+                    .map(([k, v]) => `${k}=${v}`)
+                    .join(", ");
+                  const msg = `Coding provider switched to ${data.provider} (${configStr}). All code tasks will now use this provider.`;
+                  gemini!.sendFunctionResponse(id, name, msg);
+                  ui.addGeminiToolResult(name, msg, false);
+                  ui.addStatus(`Coding provider: ${data.provider}`);
+                }
+              })
+              .catch((err) => {
+                gemini!.sendFunctionResponse(id, name, `Failed to switch provider: ${err}`);
+                ui.addGeminiToolResult(name, `Failed: ${err}`, true);
+              });
+          }
+          return;
+        }
+
+        if (name === "set_model_config") {
           const model = (args.model as string) || "";
           const effort = (args.effort as string) || "";
 
           if (!model && !effort) {
-            // No params — return current config and available options
+            // No params — return current config
             fetch("/api/claude-config")
               .then((r) => r.json())
               .then((data) => {
-                const msg = `Current config: model=${data.model}, effort=${data.effort}. Available models: opus (smartest, slowest), sonnet (balanced), haiku (fastest, cheapest). Available efforts: low, medium, high, max.`;
+                const configStr = Object.entries(data)
+                  .map(([k, v]) => `${k}=${v}`)
+                  .join(", ");
+                const msg = `Current config: ${configStr}. For Claude: models are opus/sonnet/haiku, efforts are low/medium/high/max. For Ollama: use any installed model name (e.g. llama3.1, codellama, deepseek-coder).`;
                 gemini!.sendFunctionResponse(id, name, msg);
                 ui.addGeminiToolResult(name, msg, false);
               })
@@ -248,7 +303,7 @@ async function initVoiceUI(): Promise<void> {
                 ui.addGeminiToolResult(name, `Failed: ${err}`, true);
               });
           } else {
-            log("CONFIG", `Setting Claude model=${model} effort=${effort}`);
+            log("CONFIG", `Setting model config: model=${model} effort=${effort}`);
             fetch("/api/claude-config", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
@@ -256,7 +311,10 @@ async function initVoiceUI(): Promise<void> {
             })
               .then((r) => r.json())
               .then((data) => {
-                const msg = `Claude config updated: model=${data.model}, effort=${data.effort}`;
+                const configStr = Object.entries(data)
+                  .map(([k, v]) => `${k}=${v}`)
+                  .join(", ");
+                const msg = `Config updated: ${configStr}`;
                 gemini!.sendFunctionResponse(id, name, msg);
                 ui.addGeminiToolResult(name, msg, false);
               })
